@@ -16,6 +16,63 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `category`
+--
+
+DROP TABLE IF EXISTS `category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `category` (
+  `CATEGORY_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `CATEGORY_NAME` varchar(100) NOT NULL,
+  PRIMARY KEY (`CATEGORY_ID`),
+  UNIQUE KEY `CATEGORY_ID_UNIQUE` (`CATEGORY_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `group`
+--
+
+DROP TABLE IF EXISTS `group`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `group` (
+  `GROUP_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `CATEGORY_ID` int(11) NOT NULL,
+  `GROUP_NAME` varchar(100) NOT NULL,
+  `GROUP_DESCRIPTION` varchar(100) DEFAULT NULL,
+  `USER_ID` int(11) NOT NULL,
+  PRIMARY KEY (`GROUP_ID`),
+  UNIQUE KEY `GROUP_ID_UNIQUE` (`GROUP_ID`),
+  KEY `CATEGORY_ID_idx` (`CATEGORY_ID`),
+  KEY `USER_ID_idx` (`USER_ID`),
+  KEY `GROUP_USER_ID_idx` (`USER_ID`),
+  KEY `GROUP_CATEGORY_ID_idx` (`CATEGORY_ID`),
+  CONSTRAINT `GROUP_CATEGORY_ID` FOREIGN KEY (`CATEGORY_ID`) REFERENCES `category` (`CATEGORY_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `GROUP_USER_ID` FOREIGN KEY (`USER_ID`) REFERENCES `user` (`USER_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `subcategory`
+--
+
+DROP TABLE IF EXISTS `subcategory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `subcategory` (
+  `SUB_CATEGORY_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `CATEGORY_ID` int(11) NOT NULL,
+  `SUB_CATEGORY_NAME` varchar(100) NOT NULL,
+  PRIMARY KEY (`SUB_CATEGORY_ID`),
+  UNIQUE KEY `SUB_CATEGORY_ID_UNIQUE` (`SUB_CATEGORY_ID`),
+  KEY `CATEGORY_ID_idx` (`CATEGORY_ID`),
+  CONSTRAINT `SUB_CATEGORY_CATEGORY_ID` FOREIGN KEY (`CATEGORY_ID`) REFERENCES `category` (`CATEGORY_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `test`
 --
 
@@ -30,14 +87,55 @@ CREATE TABLE `test` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `test`
+-- Table structure for table `transaction`
 --
 
-LOCK TABLES `test` WRITE;
-/*!40000 ALTER TABLE `test` DISABLE KEYS */;
-INSERT INTO `test` VALUES (1,'Welcome Mr.Manjunath Reddy');
-/*!40000 ALTER TABLE `test` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `transaction`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `transaction` (
+  `TRANSACTION_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `USER_ID` int(11) NOT NULL,
+  `GROUP_ID` int(11) DEFAULT NULL,
+  `CATEGORY_ID` int(11) DEFAULT NULL,
+  `SUB_CATEGORY_ID` int(11) DEFAULT NULL,
+  `TRANSACTION_DESCRIPTION` varchar(200) NOT NULL,
+  `TRANSACTION_AMOUNT` decimal(10,0) NOT NULL,
+  PRIMARY KEY (`TRANSACTION_ID`),
+  UNIQUE KEY `TRANSACTION_ID_UNIQUE` (`TRANSACTION_ID`),
+  KEY `TX_USER_ID_idx` (`USER_ID`),
+  KEY `tX_GROUP_idx` (`GROUP_ID`),
+  KEY `TX_CATEGORY_ID_idx` (`CATEGORY_ID`),
+  KEY `TX_SUB_CATEGORY_ID_idx` (`SUB_CATEGORY_ID`),
+  CONSTRAINT `TX_CATEGORY_ID` FOREIGN KEY (`CATEGORY_ID`) REFERENCES `category` (`CATEGORY_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `TX_GROUP` FOREIGN KEY (`GROUP_ID`) REFERENCES `group` (`GROUP_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `TX_SUB_CATEGORY_ID` FOREIGN KEY (`SUB_CATEGORY_ID`) REFERENCES `subcategory` (`SUB_CATEGORY_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `TX_USER_ID` FOREIGN KEY (`USER_ID`) REFERENCES `user` (`USER_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+  `USER_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `FIRST_NAME` varchar(30) NOT NULL,
+  `LAST_NAME` varchar(45) NOT NULL,
+  `USER_EMAIL` varchar(100) NOT NULL,
+  `USER_PASSWORD` varchar(45) NOT NULL,
+  `USER_PHONE` bigint(10) DEFAULT NULL,
+  `CREATED_ON` datetime NOT NULL,
+  `UPDATED_ON` datetime DEFAULT NULL,
+  `PASSWORD_UPDATED_ON` datetime DEFAULT NULL,
+  PRIMARY KEY (`USER_ID`),
+  UNIQUE KEY `USER_ID_UNIQUE` (`USER_ID`),
+  UNIQUE KEY `USEREMAIL_UNIQUE` (`USER_EMAIL`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -48,4 +146,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-03 22:14:54
+-- Dump completed on 2017-11-05  0:13:10
